@@ -1,65 +1,60 @@
-import os
+""" Monitoring entrypoint """
+
+from typing import List, Any
 
 import tweepy
-from tweepy.streaming import StreamListener, Stream, json
+from tweepy.streaming import Stream
 from urllib3.exceptions import ReadTimeoutError
 
-from config import EXPORT_ROOT
-from utilities import get_screenshot
+from common import api
+from config import RESOURCES
+from listener import Listener
 
 
-class Listener(StreamListener):
-    def __init__(self, posted_by=None):
-        super(Listener, self).__init__()
-        self.posted_by = posted_by or set()
+def get_following_users() -> List[Any]:
+    """ Reads `follow-user.txt` from resources, gets user id from handler """
 
-    def on_status(self, status):
-        """ on_status callback. Filters out Retweets and comments"""
+    users = []
+    print("Populating list with users to follow", flush=True)
+    with open(RESOURCES / 'follow-user.txt', 'r') as fin:
+        for handler in fin.readlines():
+            try:
+                users.append(str(api.get_user(screen_name=handler).id))
+            except tweepy.error.TweepError:
+                continue
 
-        # Filter out RTs and comments
-        if (
-            self.posted_by
-            and status.author.screen_name not in self.posted_by
-            or "retweeted_status" in status._json
-        ):
-            return
-
-        print(".", end="", flush=True)
-
-        tweet_path = EXPORT_ROOT / f"{status.id}"
-        tweet_path.mkdir(exist_ok=True, parents=True)
-        with open(tweet_path / f"{status.id}.json", "a", encoding="utf8") as fout:
-            json.dump(status._json, fout, ensure_ascii=False)
-
-        get_screenshot(status.id, tweet_path)
-
-    def on_error(self, status_code):
-        print(status_code)
-        return False
+    return users
 
 
-auth = tweepy.OAuthHandler(os.getenv("CONSUMER_KEY"), os.getenv("CONSUMER_KEY_SECRET"))
-auth.set_access_token(os.getenv("ACCESS_TOKEN"), os.getenv("ACCESS_TOKEN_SECRET"))
+def get_following_searches() -> List[Any]:
+    """ Reads `follow-search.txt` from resources """
 
-api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
-following = [
-    u
-    for u in tweepy.Cursor(
-        api.list_members, owner_screen_name="serkef", slug="p01"
-    ).items(1000)
-]
+    with open(RESOURCES / 'follow-search.txt', 'r') as fin:
+        return [s for s in fin.readlines() if s]
 
-while True:
-    listener = Listener(posted_by=set(u.screen_name for u in following))
-    stream = Stream(auth=api.auth, listener=listener)
-    try:
-        print("Started streaming")
-        stream.filter(follow=[str(u.id) for u in following])
-    except KeyboardInterrupt as e:
-        print("Stopped.")
-        break
-    except ReadTimeoutError as e:
-        print("Handled exception:", str(e))
-    finally:
-        print("Done.")
-        stream.disconnect()
+
+def main():
+    """ Main run function """
+
+    following = get_following_users()
+    tracks = get_following_searches()
+
+    print(f"Following {len(following)} users and {len(tracks)} searches")
+    while True:
+        listener = Listener()
+        stream = Stream(auth=api.auth, listener=listener)
+        try:
+            print("Started streaming", flush=True)
+            stream.filter(follow=following, track=tracks)
+        except KeyboardInterrupt as e:
+            print("Stopped.")
+            break
+        except ReadTimeoutError as e:
+            print("Handled exception:", str(e))
+        finally:
+            print("Done.")
+            stream.disconnect()
+
+
+if __name__ == '__main__':
+    main()
