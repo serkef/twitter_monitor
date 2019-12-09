@@ -1,4 +1,3 @@
-black
 python-dotenv
 selenium
 tweepy
