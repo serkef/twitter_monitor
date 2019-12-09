@@ -1,3 +1,5 @@
+""" Common configuration for all entrypoints """
+
 import os
 
 import tweepy

@@ -26,6 +26,13 @@ def get_following_users() -> List[Any]:
     return users
 
 
+def get_default_users() -> List[Any]:
+    """ Returns default list of users to follow from a custom list """
+
+    return [str(u.id) for u in
+            tweepy.Cursor(api.list_members, owner_screen_name="serkef", slug="p01").items(1000)]
+
+
 def get_following_searches() -> List[Any]:
     """ Reads `follow-search.txt` from resources """
 
@@ -37,6 +44,7 @@ def main():
     """ Main run function """
 
     following = get_following_users()
+    following.extend(get_default_users())
     tracks = get_following_searches()
 
     print(f"Following {len(following)} users and {len(tracks)} searches")
@@ -47,12 +55,12 @@ def main():
             print("Started streaming", flush=True)
             stream.filter(follow=following, track=tracks)
         except KeyboardInterrupt as e:
-            print("Stopped.")
+            print("Stopped")
             break
         except ReadTimeoutError as e:
             print("Handled exception:", str(e))
         finally:
-            print("Done.")
+            print("Done")
             stream.disconnect()
 
 
