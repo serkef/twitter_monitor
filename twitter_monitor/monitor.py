@@ -1,17 +1,17 @@
 """ Monitoring entrypoint """
-
+import os
 from typing import List, Any
 
 import tweepy
+from tweepy import API
 from tweepy.streaming import Stream
 from urllib3.exceptions import ReadTimeoutError
 
-from common import api
-from config import RESOURCES
-from listener import Listener
+from .config import RESOURCES
+from .listener import Listener
 
 
-def get_following_users() -> List[Any]:
+def get_following_users(api: API) -> List[Any]:
     """ Reads `follow-user.txt` from resources, gets user id from handler """
 
     users = []
@@ -26,7 +26,7 @@ def get_following_users() -> List[Any]:
     return users
 
 
-def get_default_users() -> List[Any]:
+def get_default_users(api: API) -> List[Any]:
     """ Returns default list of users to follow from a custom list """
 
     return [
@@ -47,8 +47,14 @@ def get_following_searches() -> List[Any]:
 def main():
     """ Main run function """
 
-    following = get_following_users()
-    following.extend(get_default_users())
+    auth = tweepy.OAuthHandler(
+        os.getenv("CONSUMER_KEY"), os.getenv("CONSUMER_KEY_SECRET")
+    )
+    auth.set_access_token(os.getenv("ACCESS_TOKEN"), os.getenv("ACCESS_TOKEN_SECRET"))
+    api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
+
+    following = get_following_users(api)
+    following.extend(get_default_users(api))
     tracks = get_following_searches()
 
     print(f"Following {len(following)} users and {len(tracks)} searches")
@@ -58,11 +64,11 @@ def main():
         try:
             print("Started streaming", flush=True)
             stream.filter(follow=following, track=tracks)
-        except KeyboardInterrupt as e:
+        except KeyboardInterrupt:
             print("Stopped")
             break
-        except ReadTimeoutError as e:
-            print("Handled exception:", str(e))
+        except ReadTimeoutError as exc:
+            print("Handled exception:", str(exc))
         finally:
             print("Done")
             stream.disconnect()
