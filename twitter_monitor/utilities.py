@@ -1,10 +1,12 @@
+""" custom utilities """
+
 from pathlib import Path
 
 from selenium import webdriver
 
 
 def get_screenshot(tweet_id: str, output_directory: Path) -> None:
-    """ Gets a screenshot from a tweet."""
+    """ Gets a screenshot from a tweet """
 
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument("--no-sandbox")
