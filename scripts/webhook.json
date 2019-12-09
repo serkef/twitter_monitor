@@ -18,18 +18,6 @@
               "name": "X-Hub-Signature"
             }
           }
-        },
-        {
-          "match":
-          {
-            "type": "value",
-            "value": "refs/heads/master",
-            "parameter":
-            {
-              "source": "payload",
-              "name": "ref"
-            }
-          }
         }
       ]
     }
