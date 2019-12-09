@@ -7,8 +7,8 @@ from tweepy import API
 from tweepy.streaming import Stream
 from urllib3.exceptions import ReadTimeoutError
 
-from .config import RESOURCES
-from .listener import Listener
+from config import RESOURCES
+from listener import Listener
 
 
 def get_following_users(api: API) -> List[Any]:
