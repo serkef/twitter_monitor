@@ -5,7 +5,7 @@ curPid=$(ps -ef | grep "python" | grep "twitter" | grep "monitor" | awk '{print 
 echo "Cloning last master"
 rm -rf ${APP_HOME}
 git clone --quiet https://github.com/serkef/twitter_monitor.git ${APP_HOME}
-cp ${APP_HOME}/scripts/webhook-redeploy.sh $(realpath $0)
+cp ${APP_HOME}/scripts/webhook* $(realpath $0)/..
 
 echo "Installing dependencies"
 python3 -m venv ${APP_ENV}
@@ -17,4 +17,4 @@ pip install -qqq --upgrade -r ${APP_HOME}/requirements.txt
 echo "Starting monitor"
 nohup python3 ${APP_HOME}/twitter_monitor/monitor.py >> ${APP_LOGS}/twitter_monitor.$(date "+%Y%m%d%H%M%S").log 2>&1 &
 echo "Killing previous version"
-kill curPid
+kill ${curPid}
