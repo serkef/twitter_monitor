@@ -16,7 +16,7 @@ def get_following_users() -> List[Any]:
 
     users = []
     print("Populating list with users to follow", flush=True)
-    with open(RESOURCES / 'follow-user.txt', 'r') as fin:
+    with open(RESOURCES / "follow-user.txt", "r") as fin:
         for handler in fin.readlines():
             try:
                 users.append(str(api.get_user(screen_name=handler).id))
@@ -29,14 +29,18 @@ def get_following_users() -> List[Any]:
 def get_default_users() -> List[Any]:
     """ Returns default list of users to follow from a custom list """
 
-    return [str(u.id) for u in
-            tweepy.Cursor(api.list_members, owner_screen_name="serkef", slug="p01").items(1000)]
+    return [
+        str(u.id)
+        for u in tweepy.Cursor(
+            api.list_members, owner_screen_name="serkef", slug="p01"
+        ).items(1000)
+    ]
 
 
 def get_following_searches() -> List[Any]:
     """ Reads `follow-search.txt` from resources """
 
-    with open(RESOURCES / 'follow-search.txt', 'r') as fin:
+    with open(RESOURCES / "follow-search.txt", "r") as fin:
         return [s for s in fin.readlines() if s]
 
 
@@ -64,5 +68,5 @@ def main():
             stream.disconnect()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
