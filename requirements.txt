@@ -2,3 +2,4 @@ black
 python-dotenv
 selenium
 tweepy
+wheel
