@@ -1,8 +1,8 @@
 [
   {
     "id": "webhook-redeploy",
-    "execute-command": "{{ getenv "DEPLOY_SCRIPT" | js }}",
-    "command-working-directory": "{{ getenv "DEPLOY_HOME" | js }}",
+    "execute-command": "{{ getenv "DEPLOY_SCRIPT" }}",
+    "command-working-directory": "{{ getenv "DEPLOY_HOME" }}",
     "trigger-rule":
     {
       "and":
@@ -11,7 +11,7 @@
           "match":
           {
             "type": "payload-hash-sha1",
-            "secret": "{{ getenv "GITHUB_WEBHOOK_SECRET" | js }}",
+            "secret": "{{ getenv "GITHUB_WEBHOOK_SECRET" }}",
             "parameter":
             {
               "source": "header",
