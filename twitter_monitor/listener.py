@@ -5,7 +5,7 @@ from time import sleep
 
 from tweepy import StreamListener
 
-from config import EXPORT_ROOT
+from config import EXPORT_ROOT, STORE_SCREENSHOTS
 from utilities import get_screenshot
 
 
@@ -19,7 +19,8 @@ class Listener(StreamListener):
         with open(tweet_path / f"{status.id}.json", "a", encoding="utf8") as fout:
             json.dump(status._json, fout, ensure_ascii=False)
 
-        get_screenshot(status.id, tweet_path)
+        if STORE_SCREENSHOTS:
+            get_screenshot(status.id, tweet_path)
 
     def on_error(self, status_code):
         if status_code == 406:
