@@ -1,6 +1,7 @@
 """ Custom stream listener """
 
 import json
+import datetime
 from time import sleep
 
 from tweepy import StreamListener
@@ -14,7 +15,8 @@ class Listener(StreamListener):
         """ on_status callback. Filters out Retweets and comments"""
         print(".", end="", flush=True)
 
-        tweet_path = EXPORT_ROOT / f"{status.id}"
+        date_str = f"{datetime.date.today().isoformat()}"
+        tweet_path = EXPORT_ROOT / date_str / f"{status.id}"
         tweet_path.mkdir(exist_ok=True, parents=True)
         with open(tweet_path / f"{status.id}.json", "a", encoding="utf8") as fout:
             json.dump(status._json, fout, ensure_ascii=False)
