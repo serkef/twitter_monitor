@@ -5,7 +5,7 @@ curPid=$(ps -ef | grep "python" | grep "twitter" | grep "monitor" | awk '{print 
 echo "Cloning last master"
 rm -rf ${APP_HOME}
 git clone --quiet https://github.com/serkef/twitter_monitor.git ${APP_HOME}
-cp ${APP_HOME}/scripts/webhook* $(dirname $0)
+cp ${APP_HOME}/scripts/* $(dirname $0)
 
 echo "Installing dependencies"
 python3 -m venv ${APP_ENV}
