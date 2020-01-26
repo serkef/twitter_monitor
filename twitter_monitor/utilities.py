@@ -25,10 +25,11 @@ def get_screenshot_selenium(tweet_id: str, output_directory: Path) -> None:
         command_executor="https://chrome.browserless.io/webdriver",
         desired_capabilities=chrome_options.to_capabilities(),
     )
-
-    driver.get(f"https://twitter.com/i/web/status/{tweet_id}")
-    driver.save_screenshot(str(output_directory / f"{tweet_id}.png"))
-    driver.quit()
+    try:
+        driver.get(f"https://twitter.com/i/web/status/{tweet_id}")
+        driver.save_screenshot(str(output_directory / f"{tweet_id}.png"))
+    finally:
+        driver.quit()
 
 
 def get_screenshot_api(tweet_id: str, output_directory: Path) -> None:
