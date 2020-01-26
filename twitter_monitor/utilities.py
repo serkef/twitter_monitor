@@ -6,7 +6,12 @@ from selenium import webdriver
 
 from config import BROWSERLESS_TOKEN
 
-def get_screenshot(tweet_id: str, output_directory: Path) -> None:
+
+def get_screenshot(*args, **kwargs) -> None:
+    get_screenshot_selenium(*args, **kwargs)
+
+
+def get_screenshot_selenium(tweet_id: str, output_directory: Path) -> None:
     """ Gets a screenshot from a tweet """
 
     chrome_options = webdriver.ChromeOptions()
@@ -24,3 +29,7 @@ def get_screenshot(tweet_id: str, output_directory: Path) -> None:
     driver.get(f"https://twitter.com/i/web/status/{tweet_id}")
     driver.save_screenshot(str(output_directory / f"{tweet_id}.png"))
     driver.quit()
+
+
+def get_screenshot_api(tweet_id: str, output_directory: Path) -> None:
+    pass
