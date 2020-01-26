@@ -4,6 +4,7 @@ from pathlib import Path
 
 from selenium import webdriver
 
+from config import BROWSERLESS_TOKEN
 
 def get_screenshot(tweet_id: str, output_directory: Path) -> None:
     """ Gets a screenshot from a tweet """
@@ -11,6 +12,9 @@ def get_screenshot(tweet_id: str, output_directory: Path) -> None:
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--headless")
+    capabilities = chrome_options.to_capabilities()
+    if BROWSERLESS_TOKEN:
+        capabilities['browserless.token'] = BROWSERLESS_TOKEN
 
     driver = webdriver.Remote(
         command_executor="https://chrome.browserless.io/webdriver",
