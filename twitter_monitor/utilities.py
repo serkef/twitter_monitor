@@ -11,7 +11,7 @@ from config import BROWSERLESS_TOKEN
 def get_screenshot(*args, **kwargs) -> None:
     """ Gets a screenshot from a tweet """
 
-    get_screenshot_selenium(*args, **kwargs)
+    get_screenshot_api(*args, **kwargs)
 
 
 def get_screenshot_selenium(tweet_id: str, output_directory: Path) -> None:
