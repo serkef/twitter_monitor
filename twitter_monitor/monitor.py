@@ -1,4 +1,5 @@
 """ Monitoring entrypoint """
+
 import os
 from typing import List, Any
 
@@ -7,16 +8,17 @@ from tweepy import API
 from tweepy.streaming import Stream
 from urllib3.exceptions import ReadTimeoutError
 
-from config import RESOURCES
+from config import TWITTER_FOLLOW_SEARCHES_FILE, TWITTER_FOLLOW_USERS_FILE
 from listener import Listener
 
 
 def get_following_users(api: API) -> List[Any]:
-    """ Reads `follow-user.txt` from resources, gets user id from handler """
+    """ Reads file with users as defined in TWITTER_FOLLOW_USERS_FILE """
 
     users = []
-    print("Populating list with users to follow", flush=True)
-    with open(RESOURCES / "follow-user.txt", "r") as fin:
+    if not TWITTER_FOLLOW_USERS_FILE:
+        return users
+    with open(TWITTER_FOLLOW_USERS_FILE) as fin:
         for handler in fin.readlines():
             try:
                 users.append(str(api.get_user(screen_name=handler).id))
@@ -38,9 +40,11 @@ def get_default_users(api: API) -> List[Any]:
 
 
 def get_following_searches() -> List[Any]:
-    """ Reads `follow-search.txt` from resources """
+    """ Reads file with searches as defined in TWITTER_FOLLOW_SEARCHES_FILE """
 
-    with open(RESOURCES / "follow-search.txt", "r") as fin:
+    if not TWITTER_FOLLOW_SEARCHES_FILE:
+        return []
+    with open(TWITTER_FOLLOW_SEARCHES_FILE, "r") as fin:
         return [s for s in fin.readlines() if s]
 
 
