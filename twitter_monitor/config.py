@@ -16,4 +16,8 @@ TWITTER_FOLLOW_USERS_FILE = os.getenv("TWITTER_FOLLOW_USERS_FILE")
 # Export location
 EXPORT_ROOT = Path(os.getenv("EXPORT_ROOT"))
 
+# Log settings
+APP_LOGS = Path(os.environ["APP_LOGS"])
+APP_LOGLEVEL = os.getenv("APP_LOGLEVEL", "INFO")
+
 RESOURCES = Path(__file__).parent / "resources"
