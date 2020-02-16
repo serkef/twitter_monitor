@@ -1,5 +1,6 @@
 """ Monitoring entrypoint """
 
+import logging
 import os
 from typing import List, Any
 
@@ -10,6 +11,7 @@ from urllib3.exceptions import ReadTimeoutError
 
 from config import TWITTER_FOLLOW_SEARCHES_FILE, TWITTER_FOLLOW_USERS_FILE
 from listener import Listener
+from utilities import set_logging
 
 
 def get_following_users(api: API) -> List[Any]:
@@ -51,6 +53,9 @@ def get_following_searches() -> List[Any]:
 def main():
     """ Main run function """
 
+    set_logging()
+    logger = logging.getLogger(f"{__name__}.main")
+
     auth = tweepy.OAuthHandler(
         os.getenv("CONSUMER_KEY"), os.getenv("CONSUMER_KEY_SECRET")
     )
@@ -61,20 +66,20 @@ def main():
     following.extend(get_default_users(api))
     tracks = get_following_searches()
 
-    print(f"Following {len(following)} users and {len(tracks)} searches")
+    logger.info(f"Following {len(following)} users and {len(tracks)} searches")
     while True:
         listener = Listener()
         stream = Stream(auth=api.auth, listener=listener)
         try:
-            print("Started streaming", flush=True)
+            logger.info("Started streaming")
             stream.filter(follow=following, track=tracks)
         except KeyboardInterrupt:
-            print("Stopped")
+            logger.info("Stopped")
             break
         except ReadTimeoutError as exc:
-            print("Handled exception:", str(exc))
+            logger.error("Handled exception:", str(exc), exc_info=True)
         finally:
-            print("Done")
+            logger.info("Done")
             stream.disconnect()
 
 

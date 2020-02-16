@@ -15,6 +15,6 @@ pip install -qqq --upgrade -r ${APP_HOME}/requirements.txt
 
 # Start the process again
 echo "Starting monitor"
-nohup python3 ${APP_HOME}/twitter_monitor/monitor.py >> ${APP_LOGS}/twitter_monitor.$(date "+%Y%m%d%H%M%S").log 2>&1 &
+nohup python3 ${APP_HOME}/twitter_monitor/monitor.py &
 echo "Killing previous version"
 kill ${curPid}

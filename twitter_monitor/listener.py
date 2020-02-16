@@ -2,6 +2,7 @@
 
 import json
 import datetime
+import logging
 from time import sleep
 
 from tweepy import StreamListener
@@ -13,7 +14,9 @@ from utilities import get_screenshot
 class Listener(StreamListener):
     def on_status(self, status):
         """ on_status callback. Filters out Retweets and comments"""
-        print(".", end="", flush=True)
+
+        logger = logging.getLogger(f"{__name__}.Listener.on_status")
+        logger.info(f"status: {status.id}", extra=status._json)
 
         date_str = f"{datetime.date.today().isoformat()}"
         tweet_path = EXPORT_ROOT / date_str / f"{status.id}"
@@ -25,11 +28,12 @@ class Listener(StreamListener):
             get_screenshot(status.id, tweet_path)
 
     def on_error(self, status_code):
-        if status_code == 406:
-            print("Getting limit error, sleeping...", end="")
-            sleep(60)
-            print("Done")
+        """ on_error callback. Works to handle exceptions"""
 
-        else:
-            print(status_code)
+        logger = logging.getLogger(f"{__name__}.Listener.on_error")
+        logger.error(f"Got error: {status_code}")
+        if status_code in {406, 420}:
+            logger.info("Sleeping...")
+            sleep(60)
+
         return False
