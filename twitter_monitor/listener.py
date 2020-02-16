@@ -1,31 +1,30 @@
 """ Custom stream listener """
 
 import json
-import datetime
 import logging
 from time import sleep
 
 from tweepy import StreamListener
+import zmq
 
-from config import EXPORT_ROOT, STORE_SCREENSHOTS
-from utilities import get_screenshot
+from config import QUEUE_PORT
 
 
 class Listener(StreamListener):
+    def __init__(self):
+        super().__init__()
+        self.zmq_context = zmq.Context()
+        self.zmq_socket = self.zmq_context.socket(zmq.REQ)
+        self.zmq_socket.connect(f"tcp://localhost:{QUEUE_PORT}")
+
     def on_status(self, status):
         """ on_status callback. Filters out Retweets and comments"""
 
         logger = logging.getLogger(f"{__name__}.Listener.on_status")
-        logger.info(f"status: {status.id}", extra=status._json)
-
-        date_str = f"{datetime.date.today().isoformat()}"
-        tweet_path = EXPORT_ROOT / date_str / f"{status.id}"
-        tweet_path.mkdir(exist_ok=True, parents=True)
-        with open(tweet_path / f"{status.id}.json", "a", encoding="utf8") as fout:
-            json.dump(status._json, fout, ensure_ascii=False)
-
-        if STORE_SCREENSHOTS:
-            get_screenshot(status.id, tweet_path)
+        logger.info(f"Received status: {status.id}")
+        obj = json.dumps(status._json, ensure_ascii=False, check_circular=False)
+        self.zmq_socket.send(obj.encode("utf-8"))
+        self.zmq_socket.recv()
 
     def on_error(self, status_code):
         """ on_error callback. Works to handle exceptions"""

@@ -20,4 +20,6 @@ EXPORT_ROOT = Path(os.getenv("EXPORT_ROOT"))
 APP_LOGS = Path(os.environ["APP_LOGS"])
 APP_LOGLEVEL = os.getenv("APP_LOGLEVEL", "INFO")
 
+# ZeroMQ port
+QUEUE_PORT = os.getenv("QUEUE_PORT", "5555")
 RESOURCES = Path(__file__).parent / "resources"

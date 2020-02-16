@@ -39,3 +39,6 @@ Example:
 * `export APP_HOME=/opt/twitter-monitor`
 * `export APP_ENV=/opt/twitter-monitor/venv`
 * `export APP_LOGS=/home/ubuntu/twimon-logs`
+
+
+## 
