@@ -15,6 +15,6 @@ poetry install --no-dev
 
 # Start the process again
 echo "Starting monitor"
-nohup python3.7 ${APP_HOME}/twitter_monitor/monitor.py &
+nohup python3.7 ${APP_HOME}/twitter/monitor.py &
 echo "Killing previous version"
 kill ${curPid}

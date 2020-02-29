@@ -1,4 +1,4 @@
-from twitter_monitor import __version__
+from twitter import __version__
 
 
 def test_version():

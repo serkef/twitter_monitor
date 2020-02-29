@@ -9,9 +9,9 @@ from tweepy import API
 from tweepy.streaming import Stream
 from urllib3.exceptions import ReadTimeoutError
 
-from config import TWITTER_FOLLOW_SEARCHES_FILE, TWITTER_FOLLOW_USERS_FILE
-from listener import Listener
-from utilities import set_logging
+from .config import TWITTER_FOLLOW_SEARCHES_FILE, TWITTER_FOLLOW_USERS_FILE
+from .listener import Listener
+from .utilities import set_logging
 
 
 def get_following_users(api: API) -> List[Any]:

@@ -8,7 +8,7 @@ from pathlib import Path
 import requests
 from selenium import webdriver
 
-from config import BROWSERLESS_TOKEN, APP_LOGS
+from .config import BROWSERLESS_TOKEN, APP_LOGS
 
 
 def get_screenshot(*args, **kwargs) -> None:

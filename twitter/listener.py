@@ -7,8 +7,8 @@ from time import sleep
 
 from tweepy import StreamListener
 
-from config import EXPORT_ROOT, STORE_SCREENSHOTS
-from utilities import get_screenshot
+from .config import EXPORT_ROOT, STORE_SCREENSHOTS
+from .utilities import get_screenshot
 
 
 class Listener(StreamListener):
